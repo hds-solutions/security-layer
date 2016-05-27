@@ -48,7 +48,7 @@
 
 		public static function allow($key) {
 			// add allowed key
-			$self::ALLOWED_KEYS[] = $key;
+			self::$ALLOWED_KEYS[] = $key;
 		}
 
 		/**
