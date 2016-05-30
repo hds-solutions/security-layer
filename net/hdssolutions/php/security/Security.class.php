@@ -152,7 +152,7 @@
 		private function cleanXSS($var) {
 			if ($var !== null)
 				foreach ($var AS $key => $value)
-					$var[$key] = in_array($key, $self::ALLOWED_KEYS) ? $value : htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+					$var[$key] = in_array($key, self::$ALLOWED_KEYS) ? $value : htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 			return $var;
 		}
 
