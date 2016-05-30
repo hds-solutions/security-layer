@@ -72,7 +72,7 @@
 		 */
 		public function newToken() {
 			// make a new token
-			$_SESSION[md5(__CLASS__).'_TOKEN'] = md5(uniqid());
+			$_SESSION[md5(__CLASS__).'_TOKEN'] = base64_encode(md5(uniqid()));
 			// return token
 			return $_SESSION[md5(__CLASS__).'_TOKEN'];
 		}
@@ -82,7 +82,7 @@
 		 */
 		public function getToken() {
 			// check if toke exists
-			if (!isset($_SESSION[md5(__CLASS__).'_TOKEN']) || strlen($_SESSION[md5(__CLASS__).'_TOKEN']) != 32)
+			if (!isset($_SESSION[md5(__CLASS__).'_TOKEN']) || strlen(base64_decode($_SESSION[md5(__CLASS__).'_TOKEN'])) != 32)
 				// create a new token
 				$this->newToken();
 			// return current token
@@ -179,9 +179,9 @@
 		}
 
 		private function lastMove() {
-			// check if token exists and is active
-			if (!isset($_SESSION[md5(__CLASS__).'_TOKEN']) || !isset($_SESSION[md5(__CLASS__).'_TOKEN']) || (strtotime('now') - $_SESSION[md5(__CLASS__).'_LAST_MOVE']) >= self::SESSION_EXPIRE)
-				// reset token
+			// check if a session exists and if the token is expired
+			if ($this->isLogged() && isset($_SESSION[md5(__CLASS__).'_LAST_MOVE']) && (strtotime('now') - $_SESSION[md5(__CLASS__).'_LAST_MOVE']) >= self::SESSION_EXPIRE)
+				// create a new token
 				$this->newToken();
 			// update timestamp
 			$_SESSION[md5(__CLASS__).'_LAST_MOVE'] = strtotime('now');
