@@ -1,7 +1,7 @@
 <?php
 	namespace net\hdssolutions\php\security;
 
-	final class Security {
+	final class SecurityLayer {
 		/**
 		 * Session inactive timeout
 		 * @var int Timeout in seconds
