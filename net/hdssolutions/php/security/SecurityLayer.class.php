@@ -52,6 +52,14 @@
 		}
 
 		/**
+		 * Returns true if there is a session open
+		 */
+		public function isLogged() {
+			// return if is logged
+			return isset($_SESSION[md5(__CLASS__).'_TOKEN']);
+		}
+
+		/**
 		 * Logout current session
 		 */
 		public function logout() {
