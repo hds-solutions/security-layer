@@ -1,6 +1,11 @@
 <?php
 	namespace net\hdssolutions\php\security;
 
+    require_once __DIR__.'/lib/Devices.class.php';
+
+    use \Exception;
+    use net\hdssolutions\php\security\lib\Devices;
+
 	final class SecurityLayer {
 		/**
 		 * Session inactive timeout
@@ -17,6 +22,12 @@
 		 */
 		private static $ALLOWED_KEYS = Array();
 
+		/**
+		 * Registred devices
+		 * @var Devices Database of registred devices
+		 */
+		private $devices;
+
 		function __construct() {
 			// init session
 			if (!isset($_SESSION)) session_start();
@@ -26,6 +37,8 @@
 			$this->configurePHP();
 			// set http security headers
 			$this->setSecurityHeaders();
+			// open devices db
+			$this->devices = new Devices();
 			// clean vars
 			$this->cleanVars();
 			// check last move
