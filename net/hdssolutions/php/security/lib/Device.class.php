@@ -49,20 +49,6 @@
         }
 
         /**
-         * Logout current session
-         */
-        public function logout() {
-            // destroy current session
-            session_destroy();
-            // remove local vars
-            unset($_SESSION[md5(__CLASS__).'_TOKEN']);
-            unset($_SESSION[md5(__CLASS__).'_LAST_MOVE']);
-            // remove token header
-            header_remove('Authorization');
-            header_remove('Auth-Version');
-        }
-
-        /**
          * Make a new token
          */
         public function newToken() {
@@ -82,6 +68,27 @@
                 $this->newToken();
             // return current token
             return $_SESSION[md5(__CLASS__).'_TOKEN'];
+        }
+
+        public function sendToken() {
+            // send new token on headers
+            if ($this->isLogged())
+                // version + token
+                header('Authorization: ' . self::VERSION . ';' . $this->newToken());
+        }
+
+        /**
+         * Logout current session
+         */
+        public function logout() {
+            // destroy current session
+            session_destroy();
+            // remove local vars
+            unset($_SESSION[md5(__CLASS__).'_TOKEN']);
+            unset($_SESSION[md5(__CLASS__).'_LAST_MOVE']);
+            // remove token header
+            header_remove('Authorization');
+            header_remove('Auth-Version');
         }
 
         /**
@@ -126,12 +133,5 @@
                 $this->newToken();
             // update timestamp
             $_SESSION[md5(__CLASS__).'_LAST_MOVE'] = strtotime('now');
-        }
-
-        public function sendToken() {
-            // send new token on headers
-            if ($this->isLogged())
-                // version + token
-                header('Authorization: ' . self::VERSION . ';' . $this->newToken(), true);
         }
     }
