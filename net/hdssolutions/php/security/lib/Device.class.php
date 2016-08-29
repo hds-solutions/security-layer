@@ -32,10 +32,12 @@
             if (!$this->initDatabase())
                 // return exception
                 throw new Exception('SQLite3 Database can\'t be inited.');
+            /*
             // load hashing extension
             if (!$this->loadExtension(__DIR__.'/../../sqlite/lib/digest.so'))
                 // return exception
                 throw new Exception('Digest Extension can\'t be loaded.');
+            */
             // check last move
             $this->lastMove();
         }
