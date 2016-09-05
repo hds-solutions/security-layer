@@ -1,13 +1,12 @@
 <?php
 	namespace net\hdssolutions\php\security;
 
-	final class SecurityLayer {
-		/**
-		 * Session inactive timeout
-		 * @var int Timeout in seconds
-		 */
-		const SESSION_EXPIRE = 1800;
+    require_once __DIR__.'/lib/Device.class.php';
 
+    use \Exception;
+    use net\hdssolutions\php\security\lib\Device;
+
+	final class SecurityLayer {
 		/**
 		 * List of keys allowed to XSS
 		 *
@@ -17,7 +16,13 @@
 		 */
 		private static $ALLOWED_KEYS = Array();
 
-		function __construct() {
+		/**
+		 * Registred device
+		 * @var Devices Registred device
+		 */
+		private $device;
+
+		public function __construct() {
 			// init session
 			if (!isset($_SESSION)) session_start();
 			// validate requested method
@@ -28,8 +33,8 @@
 			$this->setSecurityHeaders();
 			// clean vars
 			$this->cleanVars();
-			// check last move
-			$this->lastMove();
+			// open device db
+			$this->device = new Device($this);
 		}
 
 		/**
@@ -37,7 +42,7 @@
 		 *
 		 * @param mixed Variable to clean
 		 */
-		public function clean($var){
+		public function clean($var) {
 			if (gettype($var) == 'object')
 				$var = (Array)$var;
 			$var = $this->cleanXSS($var);
@@ -56,37 +61,15 @@
 		 */
 		public function isLogged() {
 			// return if is logged
-			return isset($_SESSION[md5(__CLASS__).'_TOKEN']);
+			return $this->device->isLogged();
 		}
 
 		/**
 		 * Logout current session
 		 */
 		public function logout() {
-			// destroy current session
-			session_destroy();
-		}
-
-		/**
-		 * Make a new token
-		 */
-		public function newToken() {
-			// make a new token
-			$_SESSION[md5(__CLASS__).'_TOKEN'] = base64_encode(md5(uniqid()));
-			// return token
-			return $_SESSION[md5(__CLASS__).'_TOKEN'];
-		}
-
-		/**
-		 * Get current token
-		 */
-		public function getToken() {
-			// check if toke exists
-			if (!isset($_SESSION[md5(__CLASS__).'_TOKEN']) || strlen(base64_decode($_SESSION[md5(__CLASS__).'_TOKEN'])) != 32)
-				// create a new token
-				$this->newToken();
-			// return current token
-			return $_SESSION[md5(__CLASS__).'_TOKEN'];
+			// logout device
+			return $this->device->logout();
 		}
 
 		/**
@@ -94,12 +77,25 @@
 		 * @param string Client Token
 		 */
 		public function validateToken($token = null) {
-			// get token, if param is not specified, get request token
-			$token = $token !== null ? $token : (isset($_REQUEST['token']) ? $_REQUEST['token'] : null);
-			// compare with current token
-			if ($token != $this->getToken()) return false;
-			// token is equal
-			return true;
+			// validate device token
+			return $this->device->validateToken($token);
+		}
+
+		/**
+		 * Make a new token
+		 * @return token Token
+		 */
+		public function newToken() {
+			// create device token
+			return $this->device->newToken();
+		}
+
+		/**
+		 * Send token on response
+		 */
+		public function sendToken() {
+			// send device token
+			return $this->device->sendToken();
 		}
 
 		private function validateMethod() {
@@ -179,14 +175,5 @@
 				foreach ($var AS $key => $value)
 					$var[$key] = str_replace(Array('\r\n', '\r', '\n', '\t'), Array( '\\r\\n', '\\r', '\\n', '\\t'), $value);
 			return $var;
-		}
-
-		private function lastMove() {
-			// check if a session exists and if the token is expired
-			if ($this->isLogged() && isset($_SESSION[md5(__CLASS__).'_LAST_MOVE']) && (strtotime('now') - $_SESSION[md5(__CLASS__).'_LAST_MOVE']) >= self::SESSION_EXPIRE)
-				// create a new token
-				$this->newToken();
-			// update timestamp
-			$_SESSION[md5(__CLASS__).'_LAST_MOVE'] = strtotime('now');
 		}
 	}
