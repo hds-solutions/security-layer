@@ -99,7 +99,10 @@
 		}
 
 		private function validateMethod() {
-			switch ($_SERVER['REQUEST_METHOD']) {
+			$method = $_SERVER['REQUEST_METHOD'];
+			if ($method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER))
+				$method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD']);
+			switch ($method) {
 				case 'GET':
 				case 'POST':
 				case 'PUT':
