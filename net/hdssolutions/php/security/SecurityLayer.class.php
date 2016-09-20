@@ -82,6 +82,15 @@
 		}
 
 		/**
+		 * Get current token
+		 * @return token Token
+		 */
+		public function getToken() {
+			// get device token
+			return $this->device->getToken();
+		}
+
+		/**
 		 * Make a new token
 		 * @return token Token
 		 */
