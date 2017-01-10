@@ -167,22 +167,34 @@
 
 		private function cleanXSS($var) {
 			if ($var !== null)
-				foreach ($var AS $key => $value)
-					$var[$key] = in_array($key, self::$ALLOWED_KEYS) ? $value : htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+				foreach ($var AS $key => $value) {
+					if (is_array($value))
+						$var[$key] = $this->cleanXSS($value);
+					else
+						$var[$key] = in_array($key, self::$ALLOWED_KEYS) ? $value : htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+				}
 			return $var;
 		}
 
 		private function addSlashes($var) {
 			if ($var !== null)
-				foreach ($var AS $key => $value)
-					$var[$key] = addslashes($value);
+				foreach ($var AS $key => $value) {
+					if (is_array($value))
+						$var[$key] = $this->addSlashes($value);
+					else
+						$var[$key] = addslashes($value);
+				}
 			return $var;
 		}
 
 		private function cleanCRLF($var) {
 			if ($var !== null)
-				foreach ($var AS $key => $value)
-					$var[$key] = str_replace(Array('\r\n', '\r', '\n', '\t'), Array( '\\r\\n', '\\r', '\\n', '\\t'), $value);
+				foreach ($var AS $key => $value) {
+					if (is_array($value))
+						$var[$key] = $this->cleanCRLF($value);
+					else
+						$var[$key] = str_replace(Array('\r\n', '\r', '\n', '\t'), Array( '\\r\\n', '\\r', '\\n', '\\t'), $value);
+				}
 			return $var;
 		}
 	}
