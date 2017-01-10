@@ -170,6 +170,8 @@
 				foreach ($var AS $key => $value) {
 					if (is_array($value))
 						$var[$key] = $this->cleanXSS($value);
+					elseif (is_object($value))
+						$var->$key = $this->cleanXSS($value);
 					else
 						$var[$key] = in_array($key, self::$ALLOWED_KEYS) ? $value : htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 				}
@@ -181,6 +183,8 @@
 				foreach ($var AS $key => $value) {
 					if (is_array($value))
 						$var[$key] = $this->addSlashes($value);
+					elseif (is_object($value))
+						$var->$key = $this->addSlashes($value);
 					else
 						$var[$key] = addslashes($value);
 				}
@@ -192,6 +196,8 @@
 				foreach ($var AS $key => $value) {
 					if (is_array($value))
 						$var[$key] = $this->cleanCRLF($value);
+					if (is_object($value))
+						$var->$key = $this->cleanCRLF($value);
 					else
 						$var[$key] = str_replace(Array('\r\n', '\r', '\n', '\t'), Array( '\\r\\n', '\\r', '\\n', '\\t'), $value);
 				}
