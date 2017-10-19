@@ -76,7 +76,7 @@
             // send new token on headers
             if ($this->isLogged())
                 // version + token
-                header('Authorization: ' . self::VERSION . ';' . $this->newToken());
+                header('Authorization-Token: ' . self::VERSION . ';' . $this->newToken());
         }
 
         /**
@@ -89,7 +89,7 @@
             unset($_SESSION[md5(__CLASS__).'_TOKEN']);
             unset($_SESSION[md5(__CLASS__).'_LAST_MOVE']);
             // remove token header
-            header_remove('Authorization');
+            header_remove('Authorization-Token');
             header_remove('Auth-Version');
         }
 
