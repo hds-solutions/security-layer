@@ -23,8 +23,6 @@
         private $device;
 
         public function __construct() {
-            // init session
-            if (!isset($_SESSION)) session_start();
             // validate requested method
             $this->validateMethod();
             // set basic php configurations
@@ -33,6 +31,8 @@
             $this->setSecurityHeaders();
             // clean vars
             $this->cleanVars();
+            // init session
+            if (!isset($_SESSION)) session_start();
             // open device db
             $this->device = new Device($this);
         }
