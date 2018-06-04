@@ -53,7 +53,7 @@
 
         public static function allow($key) {
             // add allowed key
-            self::$ALLOWED_KEYS[] = $key;
+            self::$ALLOWED_KEYS = array_merge(self::$ALLOWED_KEYS, gettype($key) == 'array' ? $key : [ $key ]);
         }
 
         /**
