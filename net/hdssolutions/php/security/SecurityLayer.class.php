@@ -191,7 +191,7 @@
                     if (is_array($value) || is_object($value))
                         $value = $this->addSlashes($value);
                     else
-                        $value = addslashes($value);
+                        $value = in_array($key, self::$ALLOWED_KEYS) ? $value : addslashes($value);
                     //
                     if (is_object($var))
                         $var->$key = $value;
