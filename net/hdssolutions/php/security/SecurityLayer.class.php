@@ -53,7 +53,7 @@
 
         public static function allow($key) {
             // add allowed key
-            self::$ALLOWED_KEYS[] = $key;
+            self::$ALLOWED_KEYS = array_merge(self::$ALLOWED_KEYS, gettype($key) == 'array' ? $key : [ $key ]);
         }
 
         /**
@@ -194,7 +194,7 @@
                     if (is_array($value) || is_object($value))
                         $value = $this->addSlashes($value);
                     else
-                        $value = addslashes($value);
+                        $value = in_array($key, self::$ALLOWED_KEYS) ? $value : addslashes($value);
                     //
                     if (is_object($var))
                         $var->$key = $value;
