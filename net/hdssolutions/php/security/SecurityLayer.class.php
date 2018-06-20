@@ -138,6 +138,9 @@
 
             // Uses a secure connection (HTTPS) if possible
             ini_set('session.cookie_secure', true);
+
+            // Force the cookie to current domain only
+            session_set_cookie_params(0, rtrim(dirname($_SERVER['PHP_SELF']), '/').'/', '.'.$_SERVER['HTTP_HOST'], isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != 'off', true);
         }
 
         private function setSecurityHeaders() {
