@@ -84,7 +84,7 @@
          */
         public function logout() {
             // destroy current session
-            session_destroy();
+            @session_destroy();
             // remove local vars
             unset($_SESSION[md5(__CLASS__).'_TOKEN']);
             unset($_SESSION[md5(__CLASS__).'_LAST_MOVE']);
